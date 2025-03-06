@@ -3,9 +3,16 @@
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class ManageComputers {
+    private static final List<String> VALID_COMPUTER_TYPE = Arrays.asList("l", "d");
+    private static final List<String> VALID_CPU = Arrays.asList("i5", "i7");
+    private static final List<String> VALID_RAM = Arrays.asList("16", "32");
+    private static final List<String> VALID_DISK = Arrays.asList("512", "1024");
+    private static final List<String> VALID_GPU = Arrays.asList("nvidia", "amd");
+    private static final List<String> VALID_SCREEN_SIZE = Arrays.asList("13", "14");
 
     public static void main(String args[]) {
 
@@ -46,6 +53,7 @@ public class ManageComputers {
                     editComputer(computers, s);
 
                     break;
+                    
 
             }
 
@@ -101,26 +109,26 @@ public class ManageComputers {
     //Add a new Laptop or Desktop computer to the List<Object>
     private static void addComputer(List<Object> computers, Scanner s) {
         System.out.println("ADDING COMPUTER:-");
-        System.out.print("Enter type of computer to add ('L' for Laptop, 'D' for Desktop): ");
-        String computerType = s.nextLine().toLowerCase();
+        String computerType =  getValidInput(s,"Enter type of computer to add ('L' for Laptop, 'D' for Desktop): ", VALID_COMPUTER_TYPE);
 
         Computer tempComputer = getComputerData(s);
         
         switch (computerType) {
             case "l":
-                System.out.print("Enter screen size: ");
-                String screenSize = s.nextLine();
+                String screenSize = getValidInput(s, "Enter screen size: ", VALID_SCREEN_SIZE);
                 computers.add(new Laptop(tempComputer.getCPU(), tempComputer.getRAM(), tempComputer.getDisk(), screenSize));
                 break;
             case "d":
-                System.out.print("Enter GPU type: ");
-                String GPUType = s.nextLine();
+                String GPUType = getValidInput(s, "Enter GPU type:  ", VALID_GPU);
                 computers.add(new Desktop(tempComputer.getCPU(), tempComputer.getRAM(), tempComputer.getDisk(), GPUType));
                 break;
             default:
                 System.out.println("Invalid computer type entered!");
+                break;
         }
     } //End of addComputer
+
+    
 
     //-----------------------------
     //Delete a specified computer from the List<Object>
@@ -170,12 +178,26 @@ public class ManageComputers {
     //-----------------------------
     // Helper method to get CPU, RAM, and Disk
     private static Computer getComputerData(Scanner s) {
-        System.out.print("Enter CPU: ");
-        String CPU = s.nextLine();
-        System.out.print("Enter RAM: ");
-        String RAM = s.nextLine();
-        System.out.print("Enter Disk: ");
-        String disk = s.nextLine();
+        String CPU = getValidInput(s, "Enter CPU: ", VALID_CPU);
+        String RAM = getValidInput(s, "Enter RAM: ", VALID_RAM);
+        String disk = getValidInput(s, "Enter Disk: ", VALID_DISK);
         return new Computer(CPU, RAM, disk);
-    } //End of getComputerData
+    } 
+
+    // Input Validation: white-listing input based on accepted values
+    private static String getValidInput(Scanner scanner, String prompt, List<String> validOptions) {
+        String input;
+        while (true) {
+            System.out.print(prompt);
+            input = scanner.nextLine().trim();
+            if (validOptions.contains(input.toLowerCase())) {
+                return input;
+            }
+            System.out.println("Invalid input! Allowed values [non-case sensitive]: " + String.join(", ", validOptions));
+        }
+    }
+    
+    
+    
+    //End of getComputerData
 } //End of ManageComputer class
